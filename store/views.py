@@ -5,15 +5,23 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .serializers import CollectionSerializer, ProductSerializer
-
 from .models import Collection, Product
 
 
-@api_view()
+@api_view(["GET", "POST"])
 def product_list(request):
-    queryset = Product.objects.select_related("collection").all()
-    seriallizer = ProductSerializer(queryset, many=True, context={"request": request})
-    return Response(seriallizer.data)
+    if request.method == "GET":
+        queryset = Product.objects.select_related("collection").all()
+        seriallizer = ProductSerializer(
+            queryset, many=True, context={"request": request}
+        )
+        return Response(seriallizer.data)
+    elif request.method == "POST":
+        serializer = ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        print(serializer.validated_data)
+        return Response("ok")
+
 
 
 @api_view()
