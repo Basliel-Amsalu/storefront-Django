@@ -11,8 +11,12 @@ class TaggedItemManager(models.Manager):
             content_type=content_type, object_id=obj_id
         )
 
+
 class Tag(models.Model):
     label = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.label
 
 
 class TaggedItem(models.Model):
