@@ -9,5 +9,5 @@ from store.models import Order, OrderItem, Product
 
 # Create your views here.
 def say_hello(request):
-    
+
     return render(request, "hello.html", {"name": "django"})
