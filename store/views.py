@@ -6,24 +6,19 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 
 from .serializers import CollectionSerializer, ProductSerializer
 from .models import Collection, Product
 
 
-class ProductList(ListCreateAPIView):
-    queryset = Product.objects.select_related("collection").all()
-
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
     def get_serializer_context(self):
         return {"request": self.request}
-
-
-class ProductDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
 
     def delete(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -38,17 +33,12 @@ class ProductDetail(RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CollectionList(ListCreateAPIView):
+class CollectionviewSet(ModelViewSet):
     queryset = Collection.objects.annotate(products_count=Count("products")).all()
     serializer_class = CollectionSerializer
 
     def get_serializer_context(self):
         return {"request": self.request}
-
-
-class CollectionDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Collection.objects.annotate(products_count=Count("products"))
-    serializer_class = CollectionSerializer
 
     def delete(self, request, pk):
         collection = get_object_or_404(Collection, pk=pk)
